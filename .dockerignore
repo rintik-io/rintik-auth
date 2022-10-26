@@ -1,0 +1,11 @@
+log/
+*.log
+*.log.gz
+test.go
+./rintik-auth
+tmp/
+data_test/
+vendor/
+.configs.local.yml
+db/
+rintik_auth.db

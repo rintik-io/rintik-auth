@@ -1,0 +1,101 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: rintik-auth-storage
+spec:
+  storageClassName: openebs-hostpath
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/kube-apps/rintik-io/.strg_kube/rintik-auth"
+  capacity:
+    storage: 1Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: rintik-auth-claim
+    namespace: rintik-system
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: rintik-system
+  name: rintik-auth-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: openebs-hostpath
+  volumeMode: Filesystem
+  volumeName: rintik-auth-storage
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: rintik-system
+  name: rintik-auth
+  labels:
+    app: rintik-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rintik-auth
+  template:
+    metadata:
+      labels:
+        app: rintik-auth
+    spec:
+      containers:
+      - name: rintik-auth
+        image: fahmyabdul/rintik-auth
+        env:
+        - name: APP_RUN
+          value: rintik-auth
+        - name: APP_LOG
+          value: ./log
+        - name: FETCH_APP_DATABASES_SQLITE_PATH
+          value: '/rintik-io/rintik-auth/database'
+        - name: FETCH_APP_ETC_ENDPOINTS_EFISHERY_AUTH_APP
+          value: 'http://auth-app.rintik-system.svc.cluster.local:8800/api/v1/auth-app'
+        # - name: FETCH_APP_SERVICES_RESTAPI_PORT
+        #   value: '8700'
+        # - name: APP_CONFIG
+        #   value: '/rintik-io/rintik-auth/.configs.kubernetes.yml'
+        volumeMounts:
+        - mountPath: /rintik-io/rintik-auth/database
+          name: rintik-auth-vol-1
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: "1"
+          requests:
+            memory: 512Mi
+            cpu: "0.2"
+      volumes:
+      - name: rintik-auth-vol-1
+        persistentVolumeClaim:
+          claimName: rintik-auth-claim
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: rintik-system
+  name: rintik-auth
+  labels:
+    app: rintik-auth
+spec:
+  selector:
+    app: rintik-auth
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+      nodePort: 32000
+  type: LoadBalancer

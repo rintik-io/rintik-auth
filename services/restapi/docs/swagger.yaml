@@ -1,0 +1,167 @@
+definitions:
+  models.ResponseRestApi:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  version.ResponseVersion:
+    properties:
+      last_check:
+        type: string
+      version:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /claims:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Claims JWT Token
+      parameters:
+      - description: Username/Email/Phone
+        in: formData
+        name: username_email_phone
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+      summary: Claims JWT
+      tags:
+      - auth
+  /heartbeat:
+    get:
+      consumes:
+      - application/json
+      description: return heartbeat status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/version.ResponseVersion'
+      summary: Check Heartbeat of the Service
+      tags:
+      - heartbeat
+  /register:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Register New Account With JWT Token
+      parameters:
+      - description: E-mail
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Phone
+        in: formData
+        name: phone
+        required: true
+        type: string
+      - description: Name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: Role
+        enum:
+        - admin
+        - user
+        in: formData
+        name: role
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+      summary: Register New Account
+      tags:
+      - auth
+  /validate:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Validate JWT Token
+      parameters:
+      - description: JWT Token
+        in: formData
+        name: jwt
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseRestApi'
+      summary: Validate JWT
+      tags:
+      - auth
+swagger: "2.0"

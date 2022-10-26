@@ -1,0 +1,15 @@
+[Unit]
+Description=Rintik.io Rintik-Auth
+StartLimitIntervalSec=0[Service]
+After=network.target
+ 
+[Service]
+Type=simple
+User=root
+Restart=always
+RestartSec=3
+WorkingDirectory=/rintik-io/rintik-auth
+ExecStart=/rintik-io/rintik-auth/bin/rintik-auth -config=/rintik-io/rintik-auth/conf/.configs.example.yml -log=/rintik-io/rintik-auth/log/rintik-io/rintik-auth.log
+ 
+[Install]
+WantedBy=multi-user.targe

@@ -1,0 +1,68 @@
+logger:
+  dailyRotate: true
+  compressLog: true
+  logToTerminal: true
+databases:
+  redis:
+    host: localhost:6379
+    auth: uniquepassword
+    db: 0
+    max_idle: 80
+    max_active: 12000
+    status: false
+  postgre:
+    host: localhost
+    port: 5432
+    user: root
+    pass: uniquepassword
+    db: rintik-auth
+    schema: public
+    status: false
+  mongo:
+    host:
+      '0': localhost:27017
+    user: root
+    pass: uniquepassword
+    db: admin
+    srv: false
+    cluster: false
+    rs_name: admin
+    status: false
+  sqlite:
+    path: ./db
+    file: rintik_auth.db
+    status: true
+services:
+  restapi:
+    port: '9000'
+    base_path: "/api/v1/rintik-auth"
+    swagger:
+      title: "rintik.io - Rintik Auth"
+      description: "rintik.io authentication app"
+      schemes: 
+        - "http"
+    status: true
+  kafka:
+    brokers:
+      '1': localhost:9092
+    assignor: roundrobin
+    version: 2.1.1
+    verbose: false
+    dialTimeout: 2
+    consumer:
+      type: group
+      topic: t-auth
+      group: cg-t-auth
+      oldest: true
+      status: false
+    publisher:
+      retrymax: 2
+      timeout: 2
+      idempotent: true
+      status: false
+  prometheus:
+    status: true
+etc:
+  jwt:
+    secret: rintik-auth123#!
+    exp: 100

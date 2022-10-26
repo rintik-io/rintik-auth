@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  rintik-auth:
+    container_name: rintik-auth
+    image: fahmyabdul/rintik-auth
+    restart: 'always'
+    ports:
+      - '9000:9000'
+    volumes:
+      - /apps/docker-vol/rintik-io/rintik-auth/database:/rintik-io/rintik-auth/database:rw
+      # - /apps/docker-vol/rintik-auth/.configs.local.yml:/rintik-auth/.configs.yml
+    environment: 
+      APP_RUN: 'rintik-auth'
+      # APP_LOG: '/rintik-auth/log'
+      # APP_CONFIG: '/rintik-auth/.configs.kubernetes.yml'
+      FETCH_APP_DATABASES_SQLITE_PATH: '/rintik-io/rintik-auth/database'
+      # FETCH_APP_SERVICES_RESTAPI_PORT: '8700'
